@@ -1,0 +1,4 @@
+SELECT products.name, providers.name
+FROM providers
+LEFT JOIN products ON providers.id = products.id_providers
+WHERE providers.name = 'Ajax SA'
