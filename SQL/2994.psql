@@ -1,0 +1,7 @@
+-- URL: https://www.beecrowd.com.br/judge/en/problems/view/2994
+SELECT d.name, ROUND(SUM(150*a.hours + ( 150*a.hours*ws.bonus/100 )),1) AS salary
+FROM doctors AS d
+INNER JOIN attendances AS a ON a.id_doctor = d.id
+INNER JOIN work_shifts AS ws ON ws.id = a.id_work_shift
+GROUP BY d.id
+ORDER BY salary DESC
