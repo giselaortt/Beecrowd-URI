@@ -1,0 +1,6 @@
+--URL:
+--https://www.beecrowd.com.br/judge/en/problems/view/2625
+
+SELECT SUBSTRING(natural_person.CPF FROM 1 FOR 3)||'.'||SUBSTRING(natural_person.CPF FROM 4 FOR 3)||'.'||SUBSTRING(natural_person.CPF FROM 7 FOR 3)||'-'||SUBSTRING(natural_person.CPF FROM 10 FOR 2) AS CPF
+FROM customers
+JOIN natural_person ON natural_person.id_customers = customers.id
