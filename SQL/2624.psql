@@ -1,0 +1,5 @@
+--URL:
+--https://www.beecrowd.com.br/judge/en/problems/view/2624
+
+SELECT COUNT(DISTINCT city) AS count
+FROM customers
