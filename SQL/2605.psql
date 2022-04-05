@@ -1,3 +1,8 @@
-SELECT name, street
-FROM customers
-WHERE city = 'Porto Alegre'
+--URL:
+--https://www.beecrowd.com.br/judge/en/problems/view/2605
+
+SELECT products.name, providers.name
+FROM products
+JOIN providers ON providers.id = products.id_providers
+JOIN categories ON categories.id = products.id_categories
+WHERE categories.id = 6
