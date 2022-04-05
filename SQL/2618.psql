@@ -1,0 +1,8 @@
+--URL:
+--https://www.beecrowd.com.br/judge/en/problems/view/2618
+
+SELECT products.name, providers.name, categories.name
+FROM products
+JOIN providers ON products.id_providers = providers.id
+JOIN categories ON categories.id = products.id_categories
+WHERE categories.name = 'Imported' AND providers.name = 'Sansul SA'
