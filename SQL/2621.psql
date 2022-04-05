@@ -1,0 +1,7 @@
+-- URL: https://www.beecrowd.com.br/judge/en/problems/view/2621
+
+
+SELECT products.name
+FROM providers
+JOIN products ON providers.id = products.id_providers
+WHERE products.amount BETWEEN 10 and 20 AND providers.name LIKE 'P%'
