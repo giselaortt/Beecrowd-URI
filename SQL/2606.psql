@@ -1,0 +1,7 @@
+--URL:
+--https://www.beecrowd.com.br/judge/en/problems/view/2606
+
+SELECT products.name, products.id
+FROM products
+JOIN categories ON categories.id = products.id_categories
+WHERE categories.name LIKE 'super%'
