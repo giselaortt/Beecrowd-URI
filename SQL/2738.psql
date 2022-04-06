@@ -1,0 +1,4 @@
+SELECT candidate.name, ROUND((2*score.math + 3*score.specific + 5*score.project_plan)/10,2) AS avg
+FROM candidate
+JOIN score ON score.candidate_id = candidate.id
+ORDER BY avg DESC
