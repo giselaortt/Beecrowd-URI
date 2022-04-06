@@ -1,5 +1,12 @@
 --URL
 --https://www.beecrowd.com.br/judge/en/problems/view/2993
 
-SELECT MODE(amount)
-FROM value_table
+WITH frequency AS 
+(
+    SELECT amount, COUNT(1) AS frequency
+    FROM value_table
+    GROUP BY amount
+)
+SELECT amount AS most_frequent_value
+FROM frequency
+ORDER BY frequency DESC LIMIT 1
