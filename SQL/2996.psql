@@ -1,0 +1,21 @@
+--URL:
+--https://www.beecrowd.com.br/judge/en/problems/view/2996
+
+
+WITH senders AS (
+    SELECT packages.id_package, users.name AS sender, packages.year, color
+    FROM packages
+    INNER JOIN users ON users.id = packages.id_user_sender
+    WHERE address <> 'Taiwan'
+),
+receivers AS (
+    SELECT packages.id_package, users.name AS receiver
+    FROM packages
+    INNER JOIN users ON users.id = packages.id_user_receiver
+    WHERE address <> 'Taiwan'
+)
+SELECT senders.year, senders.sender, receivers.receiver
+FROM senders
+INNER JOIN receivers ON receivers.id_package = senders.id_package
+WHERE senders.color = 'blue' OR senders.year = 2015
+ORDER BY year DESC, sender DESC
