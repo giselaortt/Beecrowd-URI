@@ -1,0 +1,5 @@
+--URL: https://www.beecrowd.com.br/judge/en/problems/view/2609
+SELECT categories.name, SUM (amount)
+FROM products
+JOIN categories ON categories.id = products.id_categories
+GROUP BY categories.name
