@@ -1,0 +1,4 @@
+SELECT name, rentals_date
+FROM customers
+JOIN rentals ON customers.id = rentals.id_customers
+WHERE rentals_date BETWEEN '2016-09-1' AND '2016-09-30'
