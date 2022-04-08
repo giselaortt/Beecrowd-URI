@@ -1,3 +1,6 @@
+--URL:
+-- https://www.beecrowd.com.br/judge/en/problems/view/2988
+
 WITH victories_count AS (
     SELECT id AS team_id, 0 AS num_victories
     FROM teams
@@ -11,11 +14,13 @@ WITH victories_count AS (
     FROM matches
     WHERE team_1_goals < team_2_goals
     GROUP BY team_2
-), victories AS (
+), 
+victories AS (
     SELECT team_id, SUM(num_victories) as victories
     FROM victories_count
     GROUP BY team_id
-), defeat_count AS (
+), 
+defeat_count AS (
     SELECT team_1 AS team_id, COUNT(1) AS num_defeats
     FROM matches
     WHERE team_1_goals < team_2_goals
@@ -28,11 +33,13 @@ WITH victories_count AS (
     UNION ALL
     SELECT id AS team_id, 0 as num_defeats
     FROM teams
-), defeats AS (
+), 
+defeats AS (
     SELECT team_id, SUM(num_defeats) AS defeats
     FROM defeat_count
     GROUP BY team_id
-), draw_count AS (
+), 
+draw_count AS (
     SELECT team_1 AS team_id, COUNT(1) AS draws
     FROM matches
     WHERE team_1_goals = team_2_goals
@@ -45,11 +52,13 @@ WITH victories_count AS (
     UNION ALL
     SELECT id AS team_id, 0 as draws
     FROM teams
-), draws AS (
+),
+draws AS (
     SELECT team_id, SUM(draws) AS draws
     FROM draw_count
     GROUP BY team_id
 )
+
 SELECT teams.name, victories+defeats+draws AS matches, victories, defeats, draws, 3*victories+draws AS score
 FROM victories
 JOIN defeats ON defeats.team_id = victories.team_id
