@@ -1,0 +1,17 @@
+--URL: https://www.beecrowd.com.br/judge/en/problems/view/2998
+
+
+WITH returns AS (
+    SELECT clients.id AS id,name, investment, month, SUM(profit) OVER(
+                        PARTITION BY client_id
+                        ORDER BY month
+                        ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+                    ) AS profit
+    FROM operations
+    JOIN clients ON operations.client_id = clients.id
+)
+SELECT name, MIN(investment), MIN(month), MIN(profit-investment) AS return
+FROM returns 
+WHERE profit >= investment
+GROUP BY name
+ORDER BY return DESC
