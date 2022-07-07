@@ -24,10 +24,12 @@ def query( graph, numberOfEmployee, ages ):
 '''
 
 
+
+
 def query( graph, employeeNumber, ages ):
     youngest = 101
 
-    for i in range( graph.shape[0] ):
+    for i in range(  len(graph)  ):
         if( graph[i][ employeeNumber ] == 1 ):
             youngest = min( youngest, ages[i-1], query( graph, i, ages ) )
 
@@ -35,9 +37,12 @@ def query( graph, employeeNumber, ages ):
 
 
 def swap( graph, firstEmployee, secondEmployee ):
-    for i in range( graph.shape[0] ):
-        graph[i][ firstEmployee ], graph[i][ secondEmployee ] = graph[i][ secondEmployee ], graph[i][ firstEmployee ]
-        graph[ firstEmployee ][i], graph[ secondEmployee ][i] = graph[ secondEmployee ][i], graph[firstEmployee][i]
+    for i in range( len(graph) ):
+        if( i != firstEmployee and i != secondEmployee ):
+            graph[i][ firstEmployee ], graph[i][ secondEmployee ] = graph[i][ secondEmployee ], graph[i][ firstEmployee ]
+            graph[ firstEmployee ][i], graph[ secondEmployee ][i] = graph[ secondEmployee ][i], graph[firstEmployee][i]
+
+    graph[ firstEmployee ][ secondEmployee ] = graph[ secondEmployee ][ firstEmployee ]
 
     return graph
 
@@ -50,9 +55,11 @@ if __name__ == '__main__':
     totalOfRelationships = int(inputs[1])
     totalOfQuestions = int(inputs[2])
 
-    graph = np.zeros((totalOfEmployee+1, totalOfEmployee+1), dtype=int)
+    graph = [ [0]*(totalOfEmployee+1) for i in range(totalOfEmployee+1) ]
+    #graph = np.zeros(( totalOfEmployee+1, totalOfEmployee+1 ))
 
     ages = [int(element) for element in input().rstrip().split()]
+
 
     for i in range(totalOfRelationships):
         inputs = input().rstrip().split()
@@ -73,5 +80,3 @@ if __name__ == '__main__':
         
         if( inputs[0] == 'T' ):
             swap( graph, int(inputs[1]), int(inputs[2]) )
-
-
