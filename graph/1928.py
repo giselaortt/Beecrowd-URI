@@ -27,7 +27,6 @@ def calculatePath( graph, startingPoint, values ):
                 if( values[i-1] == targetValue ):
                     answer = distances[ i ]
                     break
-    print(answer)
     return answer
 
 
@@ -44,9 +43,10 @@ if __name__ == '__main__':
 
     totalSum = 0
     counted = [0]*(int(numberOfCards/2)+1)
-    for i in range( numberOfCards ):
-        if( counted[ cardValues[i] ] == 0 ):
+    for i in range( 1, numberOfCards ):
+        if( counted[ cardValues[i-1] ] == 0 ):
             totalSum = totalSum + calculatePath( graph, i, cardValues )
+            counted[ cardValues[i-1] ] = 1
 
     print( totalSum )
 
