@@ -29,7 +29,7 @@ def calculateDistances( graph ):
                 distances[ currentNode ][ nextNode ] = 1
                 for node, distance in distances[ currentNode ].items() :
                     if( node not in distances[ nextNode ] ):
-                        distances[ nextNode ][ node ] = distances[ node ][ nextNode ] = distnce + 1
+                        distances[ nextNode ][ node ] = distances[ node ][ nextNode ] = distance + 1
 
     return distances
 
