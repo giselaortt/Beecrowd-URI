@@ -1,66 +1,110 @@
-#https://www.beecrowd.com.br/judge/en/problems/view/1469
+"""
+URL of the problem:
+https://www.beecrowd.com.br/judge/en/problems/view/1469
 
-import numpy as np
-import queue
+Result to this aproach: Time Limit Exceeded
+"""
 
+class LKS():
 
-
-def query( graph, employeeIndex, ages ):
-    
-
-    youngest = 101
-
-    for i in range(  len(graph)  ):
-        if( graph[i][ employeeIndex ] == 1 ):
-            youngest = min( youngest, ages[i-1], query( graph, i, ages ) )
-
-    return youngest
+    def __init__( self, numberOfEmployees ):
+        self.employeeAtPosition = { i : i for i in range( 1, numberOfEmployees+1 ) }
+        self.positionOfEmployee = { i : i for i in range( 1, numberOfEmployees+1 ) }
+        self.managersGraph = { i : set() for i in range( 1, numberOfEmployees+1 ) }
+        self.ages = {}
+        self.numberOfEmployees = numberOfEmployees
 
 
-def swap( firstEmployee, secondEmployee, ages, index ):
-    '''
-    for i in range( len(graph) ):
-        if( i != firstEmployee and i != secondEmployee ):
-            graph[i][ firstEmployee ], graph[i][ secondEmployee ] = graph[i][ secondEmployee ], graph[i][ firstEmployee ]
-            graph[ firstEmployee ][i], graph[ secondEmployee ][i] = graph[ secondEmployee ][i], graph[firstEmployee][i]
-
-    graph[ firstEmployee ][ secondEmployee ], graph[ secondEmployee ][ firstEmployee ] =graph[ secondEmployee ][ firstEmployee ],  graph[ firstEmployee ][ secondEmployee ]
-    '''
-
-    ages[ firstEmployee -1 ], ages[ secondEmployee - 1 ] = ages[ secondEmployee -1 ], ages[ firstEmployee -1  ]
-    index[ firstEmployee ], index[ secondEmployee ] = index[ secondEmployee ], index[ firstEmployee ]
-
-
-if __name__ == '__main__':
-
-    inputs = input().rstrip().split()
-
-    totalOfEmployee = int(inputs[0])
-    totalOfRelationships = int(inputs[1])
-    totalOfQuestions = int(inputs[2])
-    graph = [ [0]*(totalOfEmployee+1) for i in range(totalOfEmployee+1) ]
-    #graph = np.zeros(( totalOfEmployee+1, totalOfEmployee+1 ))
-    ages = [int(element) for element in input().rstrip().split()]
-    index = list(range(totalOfEmployee+1))
-
-
-    for i in range(totalOfRelationships):
-        inputs = input().rstrip().split()
-        x = int(inputs[0])
-        y = int(inputs[1])
-
-        graph[x][y] = 1
-
-    for i in range(totalOfQuestions):
-        inputs = input().rstrip().split()
-
-        if( inputs[0] == 'P' ):
-            indexOfEmployee = index[ int(inputs[1]) ]
-            answer = query( graph, indexOfEmployee, ages )
-            if( answer == 101 ):
-                print("*")
-            else:
-                print(answer)
+    def __str__( self ):
         
-        if( inputs[0] == 'T' ):
-            swap( int(inputs[1]), int(inputs[2]), ages, index )
+        return "ages = " + self.ages.__str__() +"\n" + "positions of employees ="+self.positionOfEmployee.__str__()+"\nemployee at position x = "+self.employeeAtPosition.__str__() + "\ngraph = "+self.managersGraph.__str__() 
+
+
+    def readAges( self ):
+        self.ages = input().rstrip().split()
+        self.ages = { i : int(age) for i, age in  enumerate( self.ages, start = 1 ) }
+
+
+    def _getManagers( self, employeeIndex ):
+        position = self._getPositionPerEmployee( employeeIndex )
+        return self.managersGraph[ position ]
+
+    def _getManagersPerPosition( self, position ):
+        return self.managersGraph[ position ]
+
+
+    def _getPositionPerEmployee( self, employeeIndex ):
+        return self.positionOfEmployee[ employeeIndex ]
+
+
+    def _getEmployeePerPosition( self, position ):
+        return self.employeeAtPosition[ position ]
+
+
+    def addManager( self, employeeIndex, managerIndex ):
+        self.managersGraph[ employeeIndex ].add( managerIndex )
+
+
+    def swap( self, employeeFirst, employeeSecond ):
+        firstPosition = self._getPositionPerEmployee( employeeFirst )
+        secondPosition = self._getPositionPerEmployee( employeeSecond )
+        self.employeeAtPosition[firstPosition], self.employeeAtPosition[secondPosition]=self.employeeAtPosition[ secondPosition ], self.employeeAtPosition[ firstPosition ] 
+        self.positionOfEmployee[employeeFirst], self.positionOfEmployee[employeeSecond]=self.positionOfEmployee[ employeeSecond ], self.positionOfEmployee[ employeeFirst ]
+
+
+    def findYoungestManager( self, employeeIndex ):
+        managers = self._getManagers( employeeIndex )
+        #print(employeeIndex)
+        if( len( managers ) == 0 ):
+            print("*")
+            return
+        youngest = 101
+        for manager in managers:
+            youngest = min( youngest, self._graphRecursion( manager ) )
+        print( youngest )
+        return
+
+
+    def _graphRecursion( self, employeePosition ):
+        employeeNumber = self.employeeAtPosition[ employeePosition ]
+        age = self.ages[ employeeNumber ]
+        managers = self._getManagers( employeeNumber )
+
+        if( len(managers) == 0 ):
+            return age
+
+        for manager in managers:
+            age = min( age, self._graphRecursion( manager ) )
+
+        return age
+
+
+if __name__ ==  "__main__":
+
+    while True: 
+
+        try:
+            inputs = input().rstrip().split()
+        except EOFError:
+            break
+
+        totalOfEmployee = int(inputs[0])
+        totalOfRelationships = int(inputs[1])
+        totalOfQuestions = int(inputs[2])
+        graph = LKS( totalOfEmployee )
+        graph.readAges()
+
+        for i in range(totalOfRelationships):
+            inputs = input().rstrip().split()
+            graph.addManager( int(inputs[1]), int(inputs[0]) )
+
+        for i in range(totalOfQuestions):
+            inputs = input().rstrip().split()
+
+            if( inputs[0] == 'P' ):
+                graph.findYoungestManager( int( inputs[1] ) )
+            
+            if( inputs[0] == 'T' ):
+                firstIndex = int(inputs[1]) 
+                secondIndex = int(inputs[2])
+                graph.swap( firstIndex, secondIndex )
