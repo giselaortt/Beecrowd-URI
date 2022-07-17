@@ -2,8 +2,11 @@
 URL of the problem:
 https://www.beecrowd.com.br/judge/en/problems/view/1469
 
-Result to this aproach: Time Limit Exceeded
+Result to this aproach: Time Limit Exceededeu li sobre algumas estruturas de dados
 """
+
+import queue
+
 
 class LKS():
 
@@ -13,10 +16,12 @@ class LKS():
         self.managersGraph = { i : set() for i in range( 1, numberOfEmployees+1 ) }
         self.ages = {}
         self.numberOfEmployees = numberOfEmployees
+	self.isManagerOf = { i:list() for i in range( 1, numberOfEmployees+1 ) }
+	self.managerAges = { i:queue.priority_queue() for i in range( 1, numberOfEmployees ) }
 
 
     def __str__( self ):
-        
+
         return "ages = " + self.ages.__str__() +"\n" + "positions of employees ="+self.positionOfEmployee.__str__()+"\nemployee at position x = "+self.employeeAtPosition.__str__() + "\ngraph = "+self.managersGraph.__str__() 
 
 
@@ -52,6 +57,10 @@ class LKS():
         self.positionOfEmployee[employeeFirst], self.positionOfEmployee[employeeSecond]=self.positionOfEmployee[ employeeSecond ], self.positionOfEmployee[ employeeFirst ]
 
 
+    def findListOfManagers( self, employeePosition ):
+	pass
+
+
     def findYoungestManager( self, employeeIndex ):
         managers = self._getManagers( employeeIndex )
         #print(employeeIndex)
@@ -81,7 +90,7 @@ class LKS():
 
 if __name__ ==  "__main__":
 
-    while True: 
+    while True:
 
         try:
             inputs = input().rstrip().split()
@@ -103,8 +112,14 @@ if __name__ ==  "__main__":
 
             if( inputs[0] == 'P' ):
                 graph.findYoungestManager( int( inputs[1] ) )
-            
+
             if( inputs[0] == 'T' ):
                 firstIndex = int(inputs[1]) 
                 secondIndex = int(inputs[2])
                 graph.swap( firstIndex, secondIndex )
+
+
+
+
+
+
