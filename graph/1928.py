@@ -1,66 +1,77 @@
+# -*- coding: utf-8 -*-
 #url of the problem:
 #https://www.beecrowd.com.br/judge/en/problems/view/1928
-# -*- coding: utf-8 -*-
-
-from collections import deque
+#Result of this approach: Time Limit Exceeded
+#In my opinion this problem was not thought to be solved in python on the given time,
+#I believe there is not a more efficient way to solve it, in terms of Big O complexity, after a lot of thinking on this problem.
+#If you do know an aceptable solution in python please contact me!
+#My suggestion is to implement this approach on cpp, wich I decided not to do because I am working towards my python skills.
+from collections import deque, Counter
 import copy
 
 
-def calculateDistances( graph ):
-    queue = deque()
-    wasVisited = set()
-    startingPoint = 1 # it makes no diference where we start this calculation so i will simply start at zero.
-    queue.append( startingPoint )
-    numberOfNodes = len(graph)
-    distances = { index : dict() for index in range( 1, numberOfNodes+1 ) }
+wasVisited = set()
+numberOfCards  = int(input().rstrip())
+cardValues = {}
+pairsOfPositions = {}
+graph = { index : list() for index in range( 1, numberOfCards+1 ) }
+totalSum = 0
+distances =  Counter()
 
-    for index in distances.keys():
-        distances[ index ][ index ] = 0
 
-    while( len( queue ) > 0 ):
-        currentNode = queue.popleft()
+def getPositionPair( position ):
+    value = cardValues[ position ]
+    pair = pairsOfPositions[ value ]
+    if( position == pair[0] ):
+        return pair[1]
+    return pair[0]
+
+
+def calculateSum(  ):
+    stack = deque()
+    stack.append( 1 )
+    totalSum = 0
+
+    while( len(stack) > 0 ):
+        currentNode = stack.pop()
         if( currentNode in wasVisited ):
             continue
         wasVisited.add( currentNode )
-        for nextNode in graph[ currentNode ]:
-            if( nextNode not in wasVisited ):
-                queue.append( nextNode )
-                distances[ nextNode ][ currentNode ] = 1
-                distances[ currentNode ][ nextNode ] = 1
-                for node, distance in distances[ currentNode ].items() :
-                    if( node not in distances[ nextNode ] ):
-                        distances[ nextNode ][ node ] = distances[ node ][ nextNode ] = distance + 1
+        valueOfCurrentNode = cardValues[ currentNode ]
+        matchPosition = getPositionPair( currentNode )
+        if( matchPosition in wasVisited ):
+            totalSum = totalSum + distances[ matchPosition ]
+            distances.pop( matchPosition )
+        else:
+            distances[ currentNode ] = 0
 
-    return distances
+        for vertex in graph[ currentNode ]:
+            if( vertex not in wasVisited ):
+                stack.append( vertex )
+                #wasVisited.add(vertex)
+
+       #add one to every element that is still on the distances counter 
+        distances.update( distances.keys() )
+
+    return  totalSum
 
 
 if __name__ == '__main__':
-    numberOfCards  = int(input().rstrip())
-    cardValues = {}
-    pairsOfPositions = {}
-    graph = { index : list() for index in range( 1, numberOfCards+1 ) }
-    totalSum = 0
 
     for i, value in zip( range( 1,numberOfCards+1 ), input().rstrip().split() ):
         value = int( value )
         cardValues[ i ] = int(value)
         if( value not in pairsOfPositions ):
-            pairsOfPositions[value] = [ i, -1 ]
+            pairsOfPositions[value] = i
         else:
-            pairsOfPositions[value][1] = i
+            pairsOfPositions[value] = ( i, pairsOfPositions[value] )
 
     for i in range(numberOfCards-1):
-        inputs = input().strip().split()
-        firstNode = int( inputs[0] )
-        secondNode = int( inputs[1] )
+        firstNode, secondNode = map( int, input().strip().split() )
         graph[ firstNode ].append( secondNode )
         graph[ secondNode ].append( firstNode )
 
-    distances = calculateDistances( graph )
-    #print( distances )
-
-    for pair in pairsOfPositions.values() :
-        totalSum = totalSum + distances[ pair[0] ][ pair[1] ]
+    totalSum = totalSum + calculateSum(  )
 
     print( totalSum )
 
