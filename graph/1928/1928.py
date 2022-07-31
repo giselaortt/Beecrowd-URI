@@ -50,7 +50,7 @@ def calculateSum(  ):
                 stack.append( vertex )
                 #wasVisited.add(vertex)
 
-       #add one to every element that is still on the distances counter 
+        #add one to every element that is still on the distances counter 
         distances.update( distances.keys() )
 
     return  totalSum
@@ -74,4 +74,6 @@ if __name__ == '__main__':
     totalSum = totalSum + calculateSum(  )
 
     print( totalSum )
+
+
 

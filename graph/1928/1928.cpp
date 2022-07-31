@@ -11,24 +11,69 @@
 #include <iostream>
 #include <unordered_map>
 #include <utility>
+#include <stack>
+
 
 #define infinity 100000000
+#define N 50000
+
 
 using namespace std;
+
+
+int values[ N ];
+int positionOfValue[ N ];
+vector< int > graph[ N ];
+int visited[ N ];
+unordered_map< int, int > pairOfPosition;
+unordered_map< int, int > distances;
+
+
+//using iterative dfs
+int sumPoints(){
+    stack<int> mstack; 
+    mstack.push( 1 );
+    int total = 0;
+
+    while( mstack.size() ){
+        int currentNode = mstack.top();
+        mstack.pop();
+        if( visited[ currentNode ] )
+            continue;
+        visited[ currentNode ] = 1;
+        int match = pairOfPosition[ currentNode ];
+
+        //sum 1 to every element in the hashmap...
+        for( auto it = distances.begin(); it != distances.end(); it++ )
+            it->second++;
+
+        if( visited[ match ] ){
+            total += distances[ match ];
+            distances.erase( match );
+        } else {
+            distances[match] = 0;
+        }
+
+        //add every neighboor of this node to mystack...
+        for( int i=0; i< graph[currentNode].size(); i++ ){
+            mstack.push( graph[currentNode][i] );
+        }
+    
+    }
+
+    return total;
+}
 
 
 int main(){
 
     int numberOfCards;
     cin >> numberOfCards;
-    int values[numberOfCards];
     int first, second;
-    int graph[ numberOfCards ][ numberOfCards ];
-    int positionOfValue[ numberOfCards ];
-    vector< pair< int, int > > pairsOfPositions;
 
     for( int i=0; i<numberOfCards;i++ ){
         positionOfValue[ i ] = -1;
+        visited[ i ] = 0;
     }
 
     for( int i=0; i<numberOfCards; i++ ){
@@ -36,41 +81,18 @@ int main(){
         if( positionOfValue[ values[i] ] == -1 )
             positionOfValue[ values[i] ] = i;
         else{
-            pairsOfPositions.push_back( make_pair( positionOfValue[ values[i] ], i ) );
+            pairOfPosition[ i ] = positionOfValue[ values[i] ];
+            pairOfPosition[ positionOfValue[ values[i] ] ] = i;
         }
     } 
 
     for( int i=0; i<numberOfCards;i++ ){
-        for( int j=0; j<numberOfCards; j++ ){
-            graph[i][j] = infinity;   
-        }
-    }
-
-    for( int i=0; i<numberOfCards;i++ ){
         cin >> first >> second;
-        graph[ first-1 ][ second-1 ] = 1;
-        graph[ second-1 ][ first-1 ] = 1;
+        graph[ first-1 ].push_back( second-1 );
+        graph[ second-1 ].push_back( first-1 );
     }
 
-    for( int i=0; i<numberOfCards; i++ ){
-        for( int j=0; j<numberOfCards; j++ ){
-            for( int k=0; k<numberOfCards; k++ ){
-                if( graph[i][k] > graph[i][j] + (graph[j][k]) ){
-                    graph[i][k] = graph[i][j] + (graph[j][k]);
-                    graph[k][i] = graph[i][j] + (graph[j][k]);
-                }
-            }
-        }
-    }
-
-    int total = 0;
-    for( int i=0; i<pairsOfPositions.size(); i++ ){ 
-        int first =  pairsOfPositions[i].first;
-        int sec = pairsOfPositions[i].second;
-        total += graph[ first ][ sec ];
-        //cout << first <<  "  " << sec << "  " << graph[first][sec] << endl;
-    }
-    cout << total << endl;
+    cout << sumPoints() <<endl;
 
 return 0;
 }
