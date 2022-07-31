@@ -3,7 +3,6 @@ URL of the problem:
 https://www.beecrowd.com.br/judge/en/problems/view/1469
 Result to this aproach: Time Limit Exceeded
 """
-
 import queue
 import heapq
 from collections import deque
@@ -35,8 +34,6 @@ class LKS():
 
     def _getPositionPerEmployee( self, employeeIndex ):
         return self.positionOfEmployee[ employeeIndex ]
-
-
     def addManager( self, employeeIndex, managerIndex ):
         self.graph[ employeeIndex ].add( managerIndex )
 
@@ -95,9 +92,7 @@ class LKS():
         for manager in managers:
             ans.extend( self._findManagersChainRecursion( manager ) )
 
-        self.managerChain[ employeePosition ] = ans
         return ans
-
 
 if __name__ ==  "__main__":
 
@@ -127,5 +122,3 @@ if __name__ ==  "__main__":
             if( inputs[0] == 'T' ):
                 firstIndex, secondIndex = map( int, inputs[1:] )
                 graph.swap( firstIndex, secondIndex )
-
-
