@@ -3,35 +3,12 @@
 #include <stack>
 #include <iostream>
 #include <queue>
-
+#include <utility>
+#include <bits/stdc++.h>
 #define N_MAX 500
 
 
 using namespace std;
-
-
-class Employee{
-    public:
-    int age;
-    int index;
-
-    Employee( int a, int i ){
-        age = a;
-        index = i;
-    }
-
-    bool operator < ( Employee other ){
-        return age < other.age;
-    }
-
-    bool greater ( Employee other ){
-        return age > other.age;
-    }
-
-    bool operator > ( Employee other ){
-        return age > other.age;
-    }
-};
 
 
 int query( int employee_number ){
@@ -50,21 +27,23 @@ int main(){
 
     int n, m, instructions;
     int ages[N_MAX];
-//    priority_queue< Employee, vector<Employee>, Employee::greater > employees_ages;
-//    question: how can i have 2 elements in my priority queue and keep them ordered by only one of them?
-//    example, if i use pair< int , int > to represent the age and the index, how can i tell my pq how who is bigger ?
     vector<vector<int>> grafo;
+    vector< pair<int,int> > employees_ages;
+
 
     while( cin >> n >> m >> instructions ){
 
         grafo.clear();
-//        employees_ages.clear();
+        employees_ages.clear();
+
         for(int i=0; i<n; i++)
             grafo.push_back( vector<int>() );
 
         for( int i=0; i<n; i++ )
             cin >> ages[i],
-            employees_ages.push( Employee( ages[i], i ) );
+            employees_ages.push_back( make_pair( ages[i], i ) );
+
+        sort( employees_ages.begin(), employees_ages.end(), greater<pair<int,int>>() );
 
         int x, y;
         for( int i=0; i<m; i++ )
@@ -85,6 +64,8 @@ int main(){
         }
     }
 
+    for( auto it = employees_ages.begin(); it!= employees_ages.end(); it++ )
+        cout << it->first<<endl;
 
 return 0;
 }
