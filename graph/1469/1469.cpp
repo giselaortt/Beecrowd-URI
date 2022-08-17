@@ -14,19 +14,35 @@ using namespace std;
 
 int n, m, instructions;
 int ages[N_MAX];
-int positionOfEmployee[ N_MAX ];
-int employeeAtPosition[ N_MAX ];
+int position_of_employee[ N_MAX ];
+int employee_at_position[ N_MAX ];
 vector<vector<int>> graph;
-vector< set< int > > managersChain;
+set< int > managars_chain[N_MAX];
 vector< pair<int,int> > employees_ages;
+bool visited[ N_MAX ];
+
+
+void dfs( int position ){
+    visited[ position ] = true;
+    for( auto it = graph[ position ].begin(); it!= graph[ position ].end(); it++ ){
+        if( !visited[ *it ] ){ 
+            dfs( *it );
+            managars_chain[ position ].insert( *it );
+        }
+        managars_chain[ position ].insert( managars_chain[ *it ].begin(), managars_chain[ *it ].end() );
+    }
+}
 
 
 int query( int employee_index ){
-    int employee_position = positionOfEmployee[ employee_index ];
-    if( managersChain[ employee_position ].empty() )
+    int employee_position = position_of_employee[ employee_index ];
+//    cout << "position" <<   employee_position << endl;
+    if( graph[ employee_position ].empty() )
         return -1;
+    if( managars_chain[ employee_position ].empty() )
+        dfs( employee_position );
     for( auto it = employees_ages.begin(); it != employees_ages.end(); it++ )
-        if( managersChain[ employee_position ].count( positionOfEmployee[ it->second ] ) )
+        if( managars_chain[ employee_position ].count(  position_of_employee[ it->second ]  ) )
             return it->first;
 
 return 0;
@@ -37,70 +53,54 @@ void swap( int employee, int other_employee ){
 
     //swap its index
     int temp;
-    temp = positionOfEmployee[ employee ];
-    positionOfEmployee[ employee ] = positionOfEmployee[ other_employee ];
-    positionOfEmployee[ other_employee ] = temp;
+    temp = position_of_employee[ employee ];
+    position_of_employee[ employee ] = position_of_employee[ other_employee ];
+    position_of_employee[ other_employee ] = temp;
     
-    //swao its positions
-    temp = employeeAtPosition[ employee ];
-    employeeAtPosition[ employee ] = employeeAtPosition[ other_employee ];
-    employeeAtPosition[ other_employee ] = temp;
-
-}
-
-
-void dfs(){
-    // todo: still did not figure it out how to add the manager to every single one of its employees. maybe the graph needs to change for a single directed one...
-    stack<int> filo;
-    filo.push( 0 );
-    int visited[ N_MAX ];
-    // todo: zero the whole visited vector...
-    while( !filo.empty() ){
-        int current = filo.top();
-        filo.pop();
-        //add to visited...
-        visited[ current ] = 1;
-        for( auto it = graph[ current ].begin(); it!= graph[current].end(); it++ ){
-            if( !visited[ *it ] )
-                filo.push( *it );
-        }
-        // é.........
-    }
+    //swap its positions
+    temp = employee_at_position[ employee ];
+    employee_at_position[ employee ] = employee_at_position[ other_employee ];
+    employee_at_position[ other_employee ] = temp;
 
 }
 
 
 int main(){
 
-
     while( cin >> n >> m >> instructions ){
 
         graph.clear();
         employees_ages.clear();
-        managersChain.clear();
 
-        for(int i=0; i<n; i++)
+        for(int i=0; i<n+1; i++)
+            managars_chain[i].clear(),
+            employee_at_position[i] = i,
+            position_of_employee[i] = i,
             graph.push_back( vector<int>() );
 
         for( int i=0; i<n; i++ )
             cin >> ages[i],
-            employees_ages.push_back( make_pair( ages[i], i ) );
+            employees_ages.push_back( make_pair( ages[i], i+1 ) );
 
-        sort( employees_ages.begin(), employees_ages.end(), greater<pair<int,int>>() );
+        sort( employees_ages.begin(), employees_ages.end() );
 
         int x, y;
         for( int i=0; i<m; i++ )
             cin >> x >> y,
-            graph[x].push_back( y ),
             graph[y].push_back( x );
 
         char type_of_instruction;
         int employee, other_employee;
         for( int i=0; i<instructions; i++ ){
             cin >> type_of_instruction;
-            if( type_of_instruction == 'p' )
-                cin >> employee,
-                cout << query(employee);
+            if( type_of_instruction == 'P' ){ 
+                cin >> employee;
+                int ans = query(employee);
+                if( ans == -1 )
+                    cout <<  "*" << endl; 
+                else
+                    cout << ans << endl;
+            }
             else 
                 cin >> employee >> other_employee,
                 swap( employee, other_employee );
@@ -110,3 +110,7 @@ int main(){
 
 return 0;
 }
+
+
+
+
