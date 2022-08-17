@@ -25,11 +25,12 @@ int values[ N ];
 int positionOfValue[ N ];
 vector< int > graph[ N ];
 int visited[ N ];
-unordered_map< int, int > pairOfPosition;
+unordered_map< int, int > whereIsMyPair;
 unordered_map< int, int > distances;
 
 
-//using iterative dfs
+
+
 int sumPoints(){
     stack<int> mstack; 
     mstack.push( 1 );
@@ -41,7 +42,7 @@ int sumPoints(){
         if( visited[ currentNode ] )
             continue;
         visited[ currentNode ] = 1;
-        int match = pairOfPosition[ currentNode ];
+        int match = whereIsMyPair[ currentNode ];
 
         //sum 1 to every element in the hashmap...
         for( auto it = distances.begin(); it != distances.end(); it++ )
@@ -51,7 +52,7 @@ int sumPoints(){
             total += distances[ match ];
             distances.erase( match );
         } else {
-            distances[match] = 0;
+            distances[ currentNode ] = 0;
         }
 
         //add every neighboor of this node to mystack...
@@ -63,6 +64,9 @@ int sumPoints(){
 
     return total;
 }
+
+
+void dfs(  ){}
 
 
 int main(){
@@ -81,8 +85,8 @@ int main(){
         if( positionOfValue[ values[i] ] == -1 )
             positionOfValue[ values[i] ] = i;
         else{
-            pairOfPosition[ i ] = positionOfValue[ values[i] ];
-            pairOfPosition[ positionOfValue[ values[i] ] ] = i;
+            whereIsMyPair[ i ] = positionOfValue[ values[i] ];
+            whereIsMyPair[ positionOfValue[ values[i] ] ] = i;
         }
     } 
 
